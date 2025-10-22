@@ -5,6 +5,9 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 
 import java.time.Duration;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Properties;
 
@@ -44,8 +47,12 @@ public class SimpleKafkaConsumer {
                     System.out.printf("Received message:%n");
                     System.out.printf("  Topic: %s%n", record.topic());
                     System.out.printf("  Partition: %d%n", record.partition());
-                    System.out.printf("  Offset: %d%n", record.offset());
-                    System.out.printf("  Timestamp: %d%n", record.timestamp());
+            System.out.printf("  Offset: %d%n", record.offset());
+            long ts = record.timestamp();
+            String tsStr = ts > 0
+                ? Instant.ofEpochMilli(ts).atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+                : "N/A";
+            System.out.printf("  Timestamp: %s (%d)%n", tsStr, ts);
                     System.out.printf("  Key: %s%n", record.key());
                     System.out.printf("  Value: %s%n", record.value());
                     System.out.println("---");
